@@ -99,7 +99,7 @@ for subdir, _, files in os.walk(root_folder):
 index_content += "</div>\n"  # folder-listクラスの閉じタグ
 index_html = html_header + index_content + html_footer
 
-output_index = "index.html"
+output_index = "home.html"
 with open(output_index, "w", encoding="utf-8") as f:
     f.write(index_html)
 
