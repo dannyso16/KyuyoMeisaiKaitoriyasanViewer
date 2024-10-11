@@ -5,6 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Gallery</title>
+        <script>
+        // リファラ（参照元）をチェックする関数
+        window.onload = function() {
+            const referrer = document.referrer;
+            // リファラが空または認証ページ以外なら、認証ページにリダイレクト
+            if (!referrer || !referrer.includes("https://dannyso16.github.io/KyuyoMeisaiKaitoriyasanViewer/")) {
+                window.location.href = "https://dannyso16.github.io/KyuyoMeisaiKaitoriyasanViewer/";
+            }
+        };
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
