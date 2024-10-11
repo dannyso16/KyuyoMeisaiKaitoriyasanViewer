@@ -11,14 +11,84 @@ def sort_by_number(filename):
 # 画像が入っているフォルダのパスを指定
 root_folder = "downloads"
 
-# HTMLのヘッダー部分（共通）
-html_header = """
+# HTMLのヘッダー部分　home.html
+#  リファラが違う
+html_header_home = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Gallery</title>
+    <script>
+        // リファラ（参照元）をチェックする関数
+        window.onload = function() {
+            const referrer = document.referrer;
+            //  リファラが空または認証ページ以外なら、認証ページにリダイレクト
+            if (!referrer || !referrer.includes("https://dannyso16.github.io/KyuyoMeisaiKaitoriyasanViewer/")) {
+                window.location.href = "https://dannyso16.github.io/KyuyoMeisaiKaitoriyasanViewer/";
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        img {
+            display: block;
+            margin: 10px auto;
+            max-width: 100%;
+            height: auto;
+        }
+        .folder-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        a {
+            display: block;
+            text-align: center;
+            font-size: 20px;
+            color: #333;
+            text-decoration: none;
+            margin: 10px;
+        }
+        a:hover {
+            color: #007BFF;
+        }
+        .folder-list {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+"""
+
+# HTMLのヘッダー部分　サブページ
+#  リファラが違う
+html_header_sub = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <script>
+        // リファラ（参照元）をチェックする関数
+        window.onload = function() {
+            const referrer = document.referrer;
+            //  リファラが空またはhomeページ以外なら、認証ページにリダイレクト
+            if (!referrer || !referrer.includes("https://dannyso16.github.io/KyuyoMeisaiKaitoriyasanViewer/home.html")) {
+                window.location.href = "https://dannyso16.github.io/KyuyoMeisaiKaitoriyasanViewer/";
+            }
+        };
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -91,13 +161,13 @@ for subdir, _, files in os.walk(root_folder):
             folder_content += f'<img src="{file_path}" alt="{file}">\n'
         
         # サブフォルダ専用ページを書き出す
-        folder_html = html_header + folder_content + html_footer
+        folder_html = html_header_sub + folder_content + html_footer
         with open(folder_page, "w", encoding="utf-8") as f:
             f.write(folder_html)
 
 # メインインデックスページを書き出す
 index_content += "</div>\n"  # folder-listクラスの閉じタグ
-index_html = html_header + index_content + html_footer
+index_html = html_header_home + index_content + html_footer
 
 output_index = "home.html"
 with open(output_index, "w", encoding="utf-8") as f:
