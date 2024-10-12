@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 import re
 
@@ -141,29 +142,44 @@ index_content = """
 <h1>給与明細買取屋さん　まとめのまとめ</h1>
 """
 
+# サブフォルダ情報をリストに保存（フォルダ名と更新日時）
+folders_info = []
+
 # ルートフォルダ内のサブフォルダを探索
 for subdir, _, files in os.walk(root_folder):
-    # サブフォルダ内に画像ファイルがあれば処理
     png_files = [f for f in files if f.endswith(".png") or f.endswith(".jpeg")]
     png_files = sorted(png_files, key=sort_by_number)
+    
     if png_files:
-        # サブフォルダ名を取得し、フォルダ名に基づくページを作成
+        # サブフォルダ名と最終更新日時を取得
         folder_name = os.path.basename(subdir)
-        folder_page = f"{folder_name}.html"
+        folder_mod_time = os.path.getmtime(subdir)
+        formatted_time = datetime.fromtimestamp(folder_mod_time).strftime('%Y-%m-%d')
         
-        # サブフォルダ名をリンクとしてインデックスページに追加
-        index_content += f'<a href="{folder_page}">{folder_name}</a>\n'
-        
-        # サブフォルダ専用のページを作成
-        folder_content = f'<div class="folder-title">{folder_name}</div>\n'
-        for file in png_files:
-            file_path = os.path.join(subdir, file)
-            folder_content += f'<img src="{file_path}" alt="{file}">\n'
-        
-        # サブフォルダ専用ページを書き出す
-        folder_html = html_header_sub + folder_content + html_footer
-        with open(folder_page, "w", encoding="utf-8") as f:
-            f.write(folder_html)
+        # サブフォルダ情報をリストに追加
+        folders_info.append((folder_name, folder_mod_time, formatted_time, png_files))
+
+# 更新日時が遅い順にソート（新しい順）
+folders_info.sort(key=lambda x: x[1], reverse=True)
+
+# ソートしたフォルダ情報からインデックスページとサブページを作成
+for folder_name, folder_mod_time, formatted_time, png_files in folders_info:
+    folder_page = f"{folder_name}.html"
+    
+    # サブフォルダ名と更新日時をインデックスページに追加
+    index_content += f'<a href="{folder_page}">{folder_name}({formatted_time})</a>\n'
+    
+    # サブフォルダ専用のページを作成
+    folder_content = f'<div class="folder-title">{folder_name}</div>\n'
+    for file in png_files:
+        file_path = os.path.join(root_folder, folder_name, file)
+        folder_content += f'<img src="{file_path}" alt="{file}">\n'
+    
+    # サブフォルダ専用ページを書き出す
+    folder_html = html_header_sub + folder_content + html_footer
+    with open(folder_page, "w", encoding="utf-8") as f:
+        f.write(folder_html)
+
 
 # メインインデックスページを書き出す
 index_content += "</div>\n"  # folder-listクラスの閉じタグ
